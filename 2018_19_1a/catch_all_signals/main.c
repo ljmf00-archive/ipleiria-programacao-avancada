@@ -83,10 +83,12 @@ int main(int argc, char** argv)
 
 	int pid = getpid();
 	INFO_LOG_F("Terminate: kill -s SIGKILL %d | kill -s SIGINT %d", pid, pid);
-	printf("Waiting for a signal\n");
 
 	while(!term)
+	{
+		printf("Waiting for a signal\n");
 		pause();
+	}
 	
 	cmdline_parser_free(&args_info);
 
