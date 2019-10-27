@@ -18,7 +18,7 @@ PROGRAM=ping_pong
 
 PROGRAM_OPT=args
 
-PROGRAM_OBJS=main.o $(PROGRAM_OPT).o
+PROGRAM_OBJS=main.o
 
 .PHONY: clean all docs indent debug
 
@@ -37,20 +37,13 @@ $(PROGRAM): $(PROGRAM_OBJS)
 	$(CC) -o $@ $(PROGRAM_OBJS) $(LIBS) $(LDFLAGS)
 
 # Dependencies
-main.o: main.c $(PROGRAM_OPT).h
-$(PROGRAM_OPT).o: $(PROGRAM_OPT).c $(PROGRAM_OPT).h
-
-$(PROGRAM_OPT).o: $(PROGRAM_OPT).c $(PROGRAM_OPT).h
-	$(CC) -ggdb -std=c11 -pedantic -c $<
+main.o: main.c
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
 
-$(PROGRAM_OPT).c $(PROGRAM_OPT).h: $(PROGRAM_OPT).ggo
-	gengetopt < $(PROGRAM_OPT).ggo --file-name=$(PROGRAM_OPT)
-
 clean:
-	rm -f *.o core.* *~ $(PROGRAM) *.bak $(PROGRAM_OPT).h $(PROGRAM_OPT).c
+	rm -f *.o core.* *~ $(PROGRAM) *.bak
 
 docs: Doxyfile
 	doxygen Doxyfile
