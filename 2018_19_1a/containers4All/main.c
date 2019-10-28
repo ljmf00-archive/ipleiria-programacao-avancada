@@ -155,9 +155,14 @@ truck_task(void* args)
 
 		printf("[ID:%d] Got container %03d ( %d left): %dkms\n",
 			   truck->id,
-			   truck->num_containers-(*(truck->containers_left)),
+			   truck->num_containers - (*(truck->containers_left)),
 			   *(truck->containers_left),
 			   dist);
+		if(pthread_mutex_unlock(truck->mutex) != 0)
+		{
+			ERR_LOG("Can't unlock mutex");
+			exit(EXIT_FAILURE);
+		}
 
 		truck->d_counter += dist;
 
@@ -170,27 +175,24 @@ truck_task(void* args)
 int
 container_lock(truck_t* truck)
 {
-	int ret;
-
 	if (pthread_mutex_lock(truck->mutex) != 0)
 	{
 		ERR_LOG("Can't lock mutex");
 		exit(EXIT_FAILURE);
 	}
 
-	if(*(truck->containers_left) <= 0)
-		ret = 0;
+	if(*(truck->containers_left) == 0)
+	{
+		if(pthread_mutex_unlock(truck->mutex) != 0)
+		{
+			ERR_LOG("Can't unlock mutex");
+			exit(EXIT_FAILURE);
+		}
+		return 0;
+	}
 	else {
 		(*(truck->containers_left))--;
 		truck->c_counter++;
-		ret = 1;
+		return 1;
 	}
-
-	if(pthread_mutex_unlock(truck->mutex) != 0)
-	{
-		ERR_LOG("Can't lock mutex");
-		exit(EXIT_FAILURE);
-	}
-
-	return ret;
 }
