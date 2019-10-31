@@ -1,0 +1,22 @@
+package "Example of .ggo file"
+version "1.0"
+purpose "Simple example (optional)"
+description "description needed (optional)"
+versiontext "versiontext needed (optional)"
+
+#----------------------------
+# independent options
+#----------------------------
+# Mandatory option
+#option "folder" f "folder" string typestr="dirname" required
+
+# Optional
+#option "num" n "number" int optional
+
+#
+# NOTE: support for this file needs to be enabled in 'makefile'
+#
+
+option "threads" t "numero de fluxos de execucao" int yes
+option "size" s "capacidade, em numero de elementos, do vetor de registo" int yes
+option "rounds" r "numero de rondas a serem efetuadas" int no default="3"
