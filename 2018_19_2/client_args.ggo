@@ -1,0 +1,7 @@
+package "Chipher Client"
+version "1.0.0"
+
+option "ip" i "ipv4 address" string no default="127.0.0.1"
+option "port" p "port number" int yes
+option "message" m "given message" string yes
+option "key" k "given key" int no
