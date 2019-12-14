@@ -5,6 +5,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <time.h>
+#include <signal.h>
 
 #include "common.h"
 #include "server_args.h"
@@ -43,9 +44,15 @@ main(int argc, char** argv)
 		ASSERT_MSG((cfd = accept(sfd, (struct sockaddr *)&client_addr, &c_len)) >= 0,
 			"Error on accept!");
 		
+		// avoid zombie processes
+		signal(SIGCHLD, SIG_IGN);
+
 		switch(fork())
 		{
-			case 0: server_child(cfd); break;
+			case 0:
+				close(sfd);
+				server_child(cfd);
+				break;
 			case -1: FATAL_LOG("Fail on fork()!");
 		}
 	}
@@ -65,7 +72,7 @@ server_child(int cfd)
 	char c;
 	if(client_answer.key == 0)
 	{
-		srand(time(NULL));
+		srand(time(NULL) ^ getpid());
 		server_answer.key = 1 + (uint8_t)(rand() % 127 + 1);
 		for (int i = 0; i < MAX_CIPHER_MESSAGE; i++)
 		{
